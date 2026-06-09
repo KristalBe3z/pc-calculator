@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор совместимости ПК</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#071326,#0c1f3d,#102c58);
+    color:#fff;
+    padding:20px;
+    overflow-x:hidden;
+}
+
+.container{
+    width:100%;
+    max-width:800px;
+}
+
+.card{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:24px;
+    padding:35px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+    animation:fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+h1{
+    text-align:center;
+    margin-bottom:30px;
+    color:#00d4ff;
+    font-size:2rem;
+}
+
+.form-group{
+    margin-bottom:22px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#d7f7ff;
+}
+
+select{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:2px solid rgba(255,255,255,0.1);
+    background:rgba(10,20,40,0.8);
+    color:#fff;
+    font-size:15px;
+    transition:0.3s;
+}
+
+select:focus{
+    outline:none;
+    border-color:#00d4ff;
+    box-shadow:0 0 15px rgba(0,212,255,0.4);
+}
+
+.invalid{
+    border-color:#ff4b4b !important;
+    box-shadow:0 0 12px rgba(255,75,75,0.5);
+}
+
+button{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:#00d4ff;
+    color:#00131f;
+    font-size:18px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.3s;
+    animation:pulse 2s infinite;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 25px rgba(0,212,255,0.7);
+}
+
+@keyframes pulse{
+    0%{
+        box-shadow:0 0 0 0 rgba(0,212,255,0.7);
+    }
+    70%{
+        box-shadow:0 0 0 18px rgba(0,212,255,0);
+    }
+    100%{
+        box-shadow:0 0 0 0 rgba(0,212,255,0);
+    }
+}
+
+/* Modal */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    padding:20px;
+}
+
+.modal-content{
+    width:100%;
+    max-width:600px;
+    background:#101a2f;
+    border-radius:22px;
+    padding:30px;
+    text-align:center;
+    animation:modalShow 0.3s ease;
+}
+
+@keyframes modalShow{
+    from{
+        opacity:0;
+        transform:scale(0.9);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.success{
+    border:3px solid #27d96f;
+}
+
+.error{
+    border:3px solid #ff4b4b;
+}
+
+.icon{
+    font-size:70px;
+    margin-bottom:15px;
+}
+
+.success .icon{
+    color:#27d96f;
+}
+
+.error .icon{
+    color:#ff4b4b;
+}
+
+.modal h2{
+    margin-bottom:15px;
+}
+
+.result-text{
+    text-align:left;
+    line-height:1.8;
+    margin-top:15px;
+    white-space:pre-line;
+}
+
+.close-btn{
+    margin-top:25px;
+    animation:none;
+    background:#00d4ff;
+}
+
+.close-btn:hover{
+    transform:none;
+}
+
+.warning{
+    color:#ff8a8a;
+    margin-top:10px;
+    text-align:center;
+    display:none;
+}
+
+@media(max-width:700px){
+    .card{
+        padding:25px;
+    }
+
+    h1{
+        font-size:1.6rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>🖥 Калькулятор совместимости ПК</h1>
+
+        <div class="form-group">
+            <label>Процессор</label>
+            <select id="cpu">
+                <option value="">Выберите процессор</option>
+
+                <optgroup label="Intel Core 12th/13th Gen (LGA1700)">
+                    <option>Core i3-12100F (LGA1700)</option>
+                    <option>Core i5-12400F (LGA1700)</option>
+                    <option>Core i5-13600KF (LGA1700)</option>
+                    <option>Core i7-13700K (LGA1700)</option>
+                </optgroup>
+
+                <optgroup label="Intel Core 10th/11th Gen (LGA1200)">
+                    <option>Core i3-10100F (LGA1200)</option>
+                    <option>Core i5-10400F (LGA1200)</option>
+                    <option>Core i7-11700K (LGA1200)</option>
+                </optgroup>
+
+                <optgroup label="AMD Ryzen 5000 (AM4)">
+                    <option>Ryzen 5 5500 (AM4)</option>
+                    <option>Ryzen 5 5600X (AM4)</option>
+                    <option>Ryzen 7 5800X3D (AM4)</option>
+                </optgroup>
+
+                <optgroup label="AMD Ryzen 7000 (AM5)">
+                    <option>Ryzen 5 7600X (AM5)</option>
+                    <option>Ryzen 7 7700X (AM5)</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Материнская плата</label>
+            <select id="motherboard">
+                <option value="">Выберите материнскую плату</option>
+
+                <optgroup label="LGA1700">
+                    <option>MSI PRO B660M-A (LGA1700)</option>
+                    <option>ASUS TUF Gaming Z690-Plus (LGA1700)</option>
+                    <option>Gigabyte B760M DS3H (LGA1700)</option>
+                </optgroup>
+
+                <optgroup label="LGA1200">
+                    <option>Gigabyte Z490 Aorus Elite (LGA1200)</option>
+                    <option>ASUS Prime B560-Plus (LGA1200)</option>
+                    <option>MSI MAG B460M Mortar (LGA1200)</option>
+                </optgroup>
+
+                <optgroup label="AM4">
+                    <option>ASUS ROG Strix B550-F (AM4)</option>
+                    <option>MSI B450 Tomahawk Max (AM4)</option>
+                    <option>Gigabyte X570 Aorus Pro (AM4)</option>
+                </optgroup>
+
+                <optgroup label="AM5">
+                    <option>ASRock B650 Pro RS (AM5)</option>
+                    <option>ASUS Prime X670-P (AM5)</option>
+                    <option>MSI MAG B650 Tomahawk (AM5)</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Видеокарта</label>
+            <select id="gpu">
+                <option value="">Выберите видеокарту</option>
+
+                <optgroup label="NVIDIA RTX 40 Series">
+                    <option>RTX 4060 (PCIe 4.0, TDP 115W, рекоменд. БП 450W)</option>
+                    <option>RTX 4070 (PCIe 4.0, TDP 200W, рекоменд. БП 650W)</option>
+                    <option>RTX 4080 (PCIe 4.0, TDP 320W, рекоменд. БП 750W)</option>
+                    <option>RTX 4090 (PCIe 4.0, TDP 450W, рекоменд. БП 850W)</option>
+                </optgroup>
+
+                <optgroup label="NVIDIA RTX 30 Series">
+                    <option>RTX 3060 (PCIe 4.0, TDP 170W, рекоменд. БП 550W)</option>
+                    <option>RTX 3070 (PCIe 4.0, TDP 220W, рекоменд. БП 650W)</option>
+                    <option>RTX 3080 (PCIe 4.0, TDP 320W, рекоменд. БП 750W)</option>
+                </optgroup>
+
+                <optgroup label="AMD Radeon RX 7000">
+                    <option>RX 7600 (PCIe 4.0, TDP 165W, рекоменд. БП 550W)</option>
+                    <option>RX 7800 XT (PCIe 4.0, TDP 263W, рекоменд. БП 700W)</option>
+                    <option>RX 7900 XTX (PCIe 4.0, TDP 355W, рекоменд. БП 800W)</option>
+                </optgroup>
+
+                <optgroup label="NVIDIA GTX">
+                    <option>GTX 1650 (PCIe 3.0, TDP 75W, рекоменд. БП 300W)</option>
+                    <option>GTX 1660 Super (PCIe 3.0, TDP 125W, рекоменд. БП 450W)</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Блок питания</label>
+            <select id="psu">
+                <option value="">Выберите мощность БП</option>
+                <option>400W</option>
+                <option>500W</option>
+                <option>600W</option>
+                <option>650W</option>
+                <option>750W</option>
+                <option>850W</option>
+                <option>1000W</option>
+            </select>
+        </div>
+
+        <button id="checkBtn">Проверить совместимость</button>
+
+        <div class="warning" id="warning">
+            Заполните все поля перед проверкой.
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content" id="modalContent">
+        <div class="icon" id="resultIcon"></div>
+        <h2 id="resultTitle"></h2>
+        <div class="result-text" id="resultText"></div>
+        <button class="close-btn" onclick="closeModal()">Закрыть</button>
+    </div>
+</div>
+
+<script>
+
+const cpuSelect = document.getElementById('cpu');
+const boardSelect = document.getElementById('motherboard');
+const gpuSelect = document.getElementById('gpu');
+const psuSelect = document.getElementById('psu');
+
+const warning = document.getElementById('warning');
+
+document.getElementById('checkBtn').addEventListener('click', checkCompatibility);
+
+function extractSocket(text){
+    const match = text.match(/\((LGA1700|LGA1200|AM4|AM5)\)/);
+    return match ? match[1] : null;
+}
+
+function extractRecommendedPSU(text){
+    const match = text.match(/рекоменд\.\s*БП\s*(\d+)W/i);
+    return match ? parseInt(match[1]) : 0;
+}
+
+function clearValidation(){
+    [cpuSelect, boardSelect, gpuSelect, psuSelect].forEach(el=>{
+        el.classList.remove('invalid');
+    });
+}
+
+function checkCompatibility(){
+
+    clearValidation();
+    warning.style.display = "none";
+
+    let valid = true;
+
+    [cpuSelect, boardSelect, gpuSelect, psuSelect].forEach(el=>{
+        if(!el.value){
+            el.classList.add('invalid');
+            valid = false;
+        }
+    });
+
+    if(!valid){
+        warning.style.display = "block";
+        return;
+    }
+
+    const cpu = cpuSelect.value;
+    const board = boardSelect.value;
+    const gpu = gpuSelect.value;
+    const psu = psuSelect.value;
+
+    const cpuSocket = extractSocket(cpu);
+    const boardSocket = extractSocket(board);
+
+    const recommendedPSU = extractRecommendedPSU(gpu);
+    const selectedPSU = parseInt(psu);
+
+    let errors = [];
+    let details = [];
+
+    if(cpuSocket === boardSocket){
+        details.push("✅ Сокет процессора и материнской платы совпадает (" + cpuSocket + ")");
+    }else{
+        errors.push("❌ Ошибка: сокет процессора и материнской платы не совпадают");
+    }
+
+    if(selectedPSU >= recommendedPSU){
+        details.push("✅ Блок питания подходит (" + selectedPSU + "W ≥ " + recommendedPSU + "W)");
+    }else{
+        errors.push("❌ Ошибка: блок питания недостаточно мощный для данной видеокарты");
+    }
+
+    if(errors.length === 0){
+        showModal(
+            true,
+            "Всё подходит!",
+            "Всё подходит! Конфигурация совместима.\n\n" +
+            details.join("\n")
+        );
+    }else{
+
+        let message = "";
+
+        if(details.length){
+            message += details.join("\n") + "\n\n";
+        }
+
+        message += errors.join("\n");
+
+        showModal(
+            false,
+            "Обнаружены проблемы",
+            message
+        );
+    }
+}
+
+function showModal(success,title,text){
+
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modalContent');
+    const icon = document.getElementById('resultIcon');
+
+    modalContent.classList.remove('success','error');
+
+    if(success){
+        modalContent.classList.add('success');
+        icon.innerHTML = "✔";
+    }else{
+        modalContent.classList.add('error');
+        icon.innerHTML = "✖";
+    }
+
+    document.getElementById('resultTitle').textContent = title;
+    document.getElementById('resultText').textContent = text;
+
+    modal.style.display = 'flex';
+}
+
+function closeModal(){
+    document.getElementById('modal').style.display = 'none';
+}
+
+window.addEventListener('click',(e)=>{
+    const modal = document.getElementById('modal');
+
+    if(e.target === modal){
+        closeModal();
+    }
+});
+
+[cpuSelect, boardSelect, gpuSelect, psuSelect].forEach(el=>{
+    el.addEventListener('change',()=>{
+        if(el.value){
+            el.classList.remove('invalid');
+        }
+    });
+});
+
+</script>
+
+</body>
+</html>
